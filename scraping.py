@@ -3,17 +3,13 @@ import re
 import html2text
 import time
 from bs4 import BeautifulSoup
-import pickle
+import json
 
 
 def save_obj(obj, name):
-    with open('obj/' + name + '.pkl', 'wb') as f:
-        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+    with open('obj/' + name + '.json', 'w') as f:
+        json.dump(obj, f)
 
-
-def load_obj(name):
-    with open('obj/' + name + '.pkl', 'rb') as f:
-        return pickle.load(f)
 
 # Find teams in a league to scrape
 
@@ -44,6 +40,7 @@ def scrape(years):
     player_dict = {}
     edge_dict = {}
     for year in years:
+        print(year)
         teams = years[year]
         for team in teams:
             t1 = time.time()
@@ -135,15 +132,10 @@ def scrape(years):
     # return player_dict, edge_dict
 
 
-# teams = ['arsenal-fc', 'chelsea-fc', 'manchester-united', 'leicester-city']
-years = {'2018': ['arsenal-fc', 'chelsea-fc', 'manchester-united', 'leicester-city'],
-         '2019': ['arsenal-fc', 'chelsea-fc', 'manchester-united', 'leicester-city'],
-         '2020': ['arsenal-fc', 'chelsea-fc', 'manchester-united', 'leicester-city'],
-         '2021': ['arsenal-fc', 'chelsea-fc', 'manchester-united', 'leicester-city']}
-
-# scrape(years)
-find = ['2011', '2012', '2013', '2014', '2015',
-        '2016', '2017', '2018', '2019', '2020', '2021']
+find = []
+for i in range(1992, 2022):
+    # print(i)
+    find.append(str(i))
 # for i in range()
 years2 = find_teams(find)
 # print(years2)

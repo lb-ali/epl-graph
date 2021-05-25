@@ -1,17 +1,13 @@
 # from requests.models import default_hooks
 # from scraping import scrape
 import time
-import pickle
-
-
-def save_obj(obj, name):
-    with open('obj/' + name + '.pkl', 'wb') as f:
-        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+import json
+import random
 
 
 def load_obj(name):
-    with open('obj/' + name + '.pkl', 'rb') as f:
-        return pickle.load(f)
+    with open('obj/' + name + '.json', 'r') as f:
+        return json.load(f)
 
 
 def BFS(pred, dist, edge_dict, start, end):
@@ -50,8 +46,8 @@ def BFS(pred, dist, edge_dict, start, end):
                 queue.append(edge_dict[u][i][0])
                 # Stop once we hit destination
                 if(edge_dict[u][i][0] == end):
-                    print(dist[edge_dict[u][i][0]])
-                    print("Found")
+                    # print(dist[edge_dict[u][i][0]])
+                    # print("Found")
                     return True
     return False
 
@@ -83,15 +79,20 @@ def shortestPath(edge_dict, start, end):
                 # print(edge_dict[path[i-1]][j])
         print(path[i-1] + ", " + path[i] + ", " + connection)
 
+    return(len(path))
+
 
 # player_dict, edge_dict = scrape()
-t1 = time.time()
 player_dict = load_obj('player_dict')
 edge_dict = load_obj('edge_dict')
-t2 = time.time()
-print(t2-t1)
 print(len(edge_dict))
-shortestPath(edge_dict, "Demba Ba", "Ollie Watkins")
+for i in range(500):
+    start = random.choice(list(player_dict.values()))[0]
+    end = random.choice(list(player_dict.values()))[0]
+    print(start, end)
+    length = shortestPath(edge_dict, start, end)
+    if(length > 4):
+        break
+# shortestPath(edge_dict, "Dennis Bergkamp", "James Justin")
 t3 = time.time()
-print(t3-t2)
 # print(edge_dict["Willian"])
