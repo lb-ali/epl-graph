@@ -86,6 +86,6 @@ def shortestPath(edge_dict, start, end):
 # player_dict, edge_dict = scrape()
 player_dict = load_obj('player_dict')
 edge_dict = load_obj('edge_dict')
-print(len(player_dict))
-shortestPath(edge_dict, "Hakim Ziyech", "Bukayo Saka")
+print(len(edge_dict))
+shortestPath(edge_dict, "David Silva", "Bukayo Saka")
 # print(edge_dict["Willian"])

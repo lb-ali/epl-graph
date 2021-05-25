@@ -15,16 +15,39 @@ def load_obj(name):
     with open('obj/' + name + '.pkl', 'rb') as f:
         return pickle.load(f)
 
+# Find teams in a league to scrape
 
-def scrape():
-    teams = ['arsenal-fc', 'chelsea-fc', 'manchester-united', 'leicester-city']
-    years = ['2018', '2019', '2020', '2021']
+
+def find_teams(find):
+    years = {}
+    # t1 = time.time()
+    for y in range(1, len(find)):
+        l = []
+        url = "https://www.worldfootball.net/players/eng-premier-league-" + \
+            find[y-1] + "-" + find[y] + "/"
+        r = requests.get(url)
+        data = r.text
+        soup = BeautifulSoup(data, features='lxml')
+        # soup = soup.get_text().split("\n")
+        soup = soup.select("a[href*=teams]")
+        for s in soup:
+            # print(type(s))
+            if "Squad" in s.text:
+                l.append(s['href'])
+                # print(s['href'])
+        # print(soup)
+        years[find[y]] = l
+    return years
+
+
+def scrape(years):
     player_dict = {}
     edge_dict = {}
     for year in years:
+        teams = years[year]
         for team in teams:
             t1 = time.time()
-            url = "https://www.worldfootball.net/teams/" + team + "/" + year + "/2/"
+            url = "https://www.worldfootball.net" + team
             r = requests.get(url)
             data = r.text
             soup = BeautifulSoup(data, features='lxml')
@@ -49,6 +72,7 @@ def scrape():
                     player.append(line)
                     player.append(group)
                     players.append(player)
+                    # print(player)
                     player = []
                 elif check and line.strip() and not any(g in line for g in groups):
                     player.append(line)
@@ -106,8 +130,23 @@ def scrape():
     # Store edges as edge1: (edge2, details)
     # Build database of v and e
     save_obj(edge_dict, 'edge_dict')
+    # print(edge_dict)
     save_obj(player_dict, 'player_dict')
     # return player_dict, edge_dict
 
 
-scrape()
+# teams = ['arsenal-fc', 'chelsea-fc', 'manchester-united', 'leicester-city']
+years = {'2018': ['arsenal-fc', 'chelsea-fc', 'manchester-united', 'leicester-city'],
+         '2019': ['arsenal-fc', 'chelsea-fc', 'manchester-united', 'leicester-city'],
+         '2020': ['arsenal-fc', 'chelsea-fc', 'manchester-united', 'leicester-city'],
+         '2021': ['arsenal-fc', 'chelsea-fc', 'manchester-united', 'leicester-city']}
+
+# scrape(years)
+find = ['2011', '2012', '2013', '2014', '2015',
+        '2016', '2017', '2018', '2019', '2020', '2021']
+# for i in range()
+years2 = find_teams(find)
+# print(years2)
+
+scrape(years2)
+# print(edge_dict)
