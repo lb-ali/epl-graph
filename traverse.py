@@ -1,5 +1,6 @@
-from requests.models import default_hooks
-from scraping import scrape
+# from requests.models import default_hooks
+# from scraping import scrape
+import time
 import pickle
 
 
@@ -84,8 +85,13 @@ def shortestPath(edge_dict, start, end):
 
 
 # player_dict, edge_dict = scrape()
+t1 = time.time()
 player_dict = load_obj('player_dict')
 edge_dict = load_obj('edge_dict')
+t2 = time.time()
+print(t2-t1)
 print(len(edge_dict))
-shortestPath(edge_dict, "David Silva", "Bukayo Saka")
+shortestPath(edge_dict, "Demba Ba", "Ollie Watkins")
+t3 = time.time()
+print(t3-t2)
 # print(edge_dict["Willian"])
