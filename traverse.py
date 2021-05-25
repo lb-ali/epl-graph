@@ -1,5 +1,16 @@
 from requests.models import default_hooks
 from scraping import scrape
+import pickle
+
+
+def save_obj(obj, name):
+    with open('obj/' + name + '.pkl', 'wb') as f:
+        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+
+
+def load_obj(name):
+    with open('obj/' + name + '.pkl', 'rb') as f:
+        return pickle.load(f)
 
 
 def BFS(pred, dist, edge_dict, start, end):
@@ -60,11 +71,21 @@ def shortestPath(edge_dict, start, end):
         path.append(pred[crawl])
         crawl = pred[crawl]
 
-    for i in range(len(path)):
-        print(path[i])
+    # Print path
+    for i in range(1, len(path)):
+        # Find details for each connection
+        connection = ""
+        for j in range(len(edge_dict[path[i-1]])):
+            if(edge_dict[path[i-1]][j][0] == path[i]):
+                connection = edge_dict[path[i-1]][j][1]
+            # else:
+                # print(edge_dict[path[i-1]][j])
+        print(path[i-1] + ", " + path[i] + ", " + connection)
 
 
-player_dict, edge_dict = scrape()
+# player_dict, edge_dict = scrape()
+player_dict = load_obj('player_dict')
+edge_dict = load_obj('edge_dict')
 print(len(player_dict))
 shortestPath(edge_dict, "Hakim Ziyech", "Bukayo Saka")
 # print(edge_dict["Willian"])

@@ -3,6 +3,17 @@ import re
 import html2text
 import time
 from bs4 import BeautifulSoup
+import pickle
+
+
+def save_obj(obj, name):
+    with open('obj/' + name + '.pkl', 'wb') as f:
+        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+
+
+def load_obj(name):
+    with open('obj/' + name + '.pkl', 'rb') as f:
+        return pickle.load(f)
 
 
 def scrape():
@@ -94,4 +105,9 @@ def scrape():
     # Hash by name
     # Store edges as edge1: (edge2, details)
     # Build database of v and e
-    return player_dict, edge_dict
+    save_obj(edge_dict, 'edge_dict')
+    save_obj(player_dict, 'player_dict')
+    # return player_dict, edge_dict
+
+
+scrape()
