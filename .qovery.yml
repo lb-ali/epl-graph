@@ -1,0 +1,11 @@
+---
+application:
+  name: "epl-graph"
+  project: "epl-graph"
+  organization: "QoveryCommunity"
+routers:
+- name: "main-epl-graph"
+  routes:
+  - application_name: "epl-graph"
+    paths:
+    - "/*"
