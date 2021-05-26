@@ -3,6 +3,8 @@
 import time
 import json
 import random
+from pywebio.input import *
+from pywebio.output import *
 
 
 def load_obj(name):
@@ -68,31 +70,37 @@ def shortestPath(edge_dict, start, end):
         path.append(pred[crawl])
         crawl = pred[crawl]
 
-    # Print path
-    for i in range(1, len(path)):
-        # Find details for each connection
-        connection = ""
-        for j in range(len(edge_dict[path[i-1]])):
-            if(edge_dict[path[i-1]][j][0] == path[i]):
-                connection = edge_dict[path[i-1]][j][1]
-            # else:
-                # print(edge_dict[path[i-1]][j])
-        print(path[i-1] + ", " + path[i] + ", " + connection)
-
-    return(len(path))
+    return(path)
 
 
 # player_dict, edge_dict = scrape()
 player_dict = load_obj('player_dict')
 edge_dict = load_obj('edge_dict')
-print(len(edge_dict))
-for i in range(500):
-    start = random.choice(list(player_dict.values()))[0]
-    end = random.choice(list(player_dict.values()))[0]
-    print(start, end)
-    length = shortestPath(edge_dict, start, end)
-    if(length > 4):
-        break
+# print(len(edge_dict))
+sorted_names = sorted(edge_dict.keys(), key=lambda x: x.lower())
+sorted_names = sorted_names[4:]
+info = input_group("Enter two players to connect through teammates: ", [input("Enter player 1: ", name='start', type=TEXT, datalist=sorted_names),
+                                                                        input("Enter player 2: ", name='end', type=TEXT, datalist=sorted_names)])
+
+path = shortestPath(edge_dict, info['start'], info['end'])
+# Print path
+for i in range(1, len(path)):
+    # Find details for each connection
+    connection = ""
+    for j in range(len(edge_dict[path[i-1]])):
+        if(edge_dict[path[i-1]][j][0] == path[i]):
+            connection = edge_dict[path[i-1]][j][1]
+            # else:
+            # print(edge_dict[path[i-1]][j])
+    put_text(path[i-1] + ", " + path[i] + ", " + connection)
+
+# for i in range(500):
+#     start = random.choice(list(player_dict.values()))[0]
+#     end = random.choice(list(player_dict.values()))[0]
+#     print(start, end)
+#     length = shortestPath(edge_dict, start, end)
+#     if(length > 5):
+#         break
 # shortestPath(edge_dict, "Dennis Bergkamp", "James Justin")
 t3 = time.time()
 # print(edge_dict["Willian"])
