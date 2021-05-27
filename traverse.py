@@ -5,11 +5,17 @@ import json
 import random
 from pywebio.input import *
 from pywebio.output import *
+from pywebio.platform.tornado import start_server
+from pywebio.platform import *
 
 
 def load_obj(name):
     with open('obj/' + name + '.json', 'r') as f:
         return json.load(f)
+
+
+player_dict = load_obj('player_dict')
+edge_dict = load_obj('edge_dict')
 
 
 def BFS(pred, dist, edge_dict, start, end):
@@ -73,34 +79,52 @@ def shortestPath(edge_dict, start, end):
     return(path)
 
 
-# player_dict, edge_dict = scrape()
-player_dict = load_obj('player_dict')
-edge_dict = load_obj('edge_dict')
-# print(len(edge_dict))
-sorted_names = sorted(edge_dict.keys(), key=lambda x: x.lower())
-sorted_names = sorted_names[4:]
-info = input_group("Enter two players to connect through teammates: ", [input("Enter player 1: ", name='start', type=TEXT, datalist=sorted_names),
-                                                                        input("Enter player 2: ", name='end', type=TEXT, datalist=sorted_names)])
+def set_now_ts(set_value):
+    set_value(int(time.time()))
 
-path = shortestPath(edge_dict, info['start'], info['end'])
-# Print path
-for i in range(1, len(path)):
-    # Find details for each connection
-    connection = ""
-    for j in range(len(edge_dict[path[i-1]])):
-        if(edge_dict[path[i-1]][j][0] == path[i]):
-            connection = edge_dict[path[i-1]][j][1]
-            # else:
-            # print(edge_dict[path[i-1]][j])
-    put_text(path[i-1] + ", " + path[i] + ", " + connection)
 
-# for i in range(500):
-#     start = random.choice(list(player_dict.values()))[0]
-#     end = random.choice(list(player_dict.values()))[0]
-#     print(start, end)
-#     length = shortestPath(edge_dict, start, end)
-#     if(length > 5):
-#         break
-# shortestPath(edge_dict, "Dennis Bergkamp", "James Justin")
-t3 = time.time()
-# print(edge_dict["Willian"])
+def shuffle(set_value):
+    set_value(random.choice(list(player_dict.values()))[0])
+
+
+def main():
+    # player_dict, edge_dict = scrape()
+
+    # print(len(edge_dict))
+    sorted_names = sorted(edge_dict.keys(), key=lambda x: x.lower())
+    sorted_names = sorted_names[4:]
+    use_scope()
+    info = input_group("Enter two players to connect through teammates: ", [input("Enter player 1: ", name='start', type=TEXT, datalist=sorted_names, action=("Shuffle", shuffle)),
+                                                                            input("Enter player 2: ", name='end', type=TEXT, datalist=sorted_names, action=("Shuffle", shuffle))])
+
+    path = shortestPath(edge_dict, info['start'], info['end'])
+    # Print path
+    out = ""
+    for i in range(1, len(path)):
+        # Find details for each connection
+        connection = ""
+        for j in range(len(edge_dict[path[i-1]])):
+            if(edge_dict[path[i-1]][j][0] == path[i]):
+                connection = edge_dict[path[i-1]][j][1]
+                # else:
+                # print(edge_dict[path[i-1]][j])
+        out = out + path[i-1] + ", " + path[i] + ", " + connection + "\n"
+    # scroll_to(position='middle')
+    use_scope()
+    put_text(out)
+
+    # for i in range(500):
+    #     start = random.choice(list(player_dict.values()))[0]
+    #     end = random.choice(list(player_dict.values()))[0]
+    #     print(start, end)
+    #     length = shortestPath(edge_dict, start, end)
+    #     if(length > 5):
+    #         break
+    # shortestPath(edge_dict, "Dennis Bergkamp", "James Justin")
+    t3 = time.time()
+    # print(edge_dict["Willian"])
+
+
+if __name__ == '__main__':
+    start_server(main, debug=True, port=8180, cdn=False)
+    # path_deploy("/Documents/Python/Soccer/graph-project")
