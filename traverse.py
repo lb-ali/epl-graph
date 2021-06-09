@@ -16,6 +16,7 @@ def load_obj(name):
 
 player_dict = load_obj('player_dict')
 edge_dict = load_obj('edge_dict')
+logo_dict = load_obj('logo_dict')
 
 
 def BFS(pred, dist, edge_dict, start, end):
@@ -99,24 +100,31 @@ def main():
     while user:
         if not first:
             button = actions("", ['Restart'])
-            clear()
+            # clear()
         info = input_group("Enter two players to connect through teammates: ", [input("Enter player 1: ", name='start', type=TEXT, datalist=sorted_names, action=("Shuffle", shuffle)),
                                                                                 input("Enter player 2: ", name='end', type=TEXT, datalist=sorted_names, action=("Shuffle", shuffle))])
 
-        path = shortestPath(edge_dict, info['start'], info['end'])
+        path = shortestPath(edge_dict, info['end'], info['start'])
         # Print path
-        out = ""
+        out = []
         for i in range(1, len(path)):
             # Find details for each connection
             connection = ""
             for j in range(len(edge_dict[path[i-1]])):
                 if(edge_dict[path[i-1]][j][0] == path[i]):
                     connection = edge_dict[path[i-1]][j][1]
+                    name = connection.split("/")[2]
+                    name = name.split("-")[0] + " " + name.split("-")[1]
+                    year = connection.split("/")[3]
                     # else:
                     # print(edge_dict[path[i-1]][j])
-            out = out + path[i-1] + ", " + path[i] + ", " + connection + "\n"
+            out.append([path[i-1], year, put_image(src=logo_dict[name],
+                                                   height='40px', width='40px'), path[i]])
         # scroll_to(position='middle')
-        put_text(out)
+        # for o in out:
+            # put_image(src=o[2], width='30px', height='30px')
+            # put_text(o[0])
+        put_table(out, header=None)
         first = False
         # for i in range(500):
         #     start = random.choice(list(player_dict.values()))[0]
@@ -132,4 +140,3 @@ def main():
 
 if __name__ == '__main__':
     start_server(main, debug=True, port=8180, cdn=False)
-    # path_deploy("/Documents/Python/Soccer/graph-project")

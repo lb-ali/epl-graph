@@ -36,7 +36,7 @@ def find_teams(find):
     return years
 
 
-def scrape(years):
+def scrape_teams(years):
     player_dict = {}
     edge_dict = {}
     for year in years:
@@ -132,13 +132,38 @@ def scrape(years):
     # return player_dict, edge_dict
 
 
+def scrape_logos():
+    logo_dict = {}
+    for year in years2.keys():
+        for team in years2[year]:
+            name = team.split("/")[2]
+            name = name.split("-")[0] + " " + name.split("-")[1]
+            # print(name)
+            url = "https://www.worldfootball.net" + team
+            r = requests.get(url)
+            data = r.text
+            soup = BeautifulSoup(data, features='lxml')
+            soup = soup.prettify()
+            for line in soup.split('\n'):
+                if name in line.lower() and 'title="' + name in line.lower() and "src=" in line.lower() and "wappen" in line.lower():
+                    temp = line.split('src="')[1]
+                    temp = temp.split('"')[0]
+                    if name not in logo_dict.keys():
+                        logo_dict[name] = temp
+                    break
+    save_obj(logo_dict, 'logo_dict')
+    return logo_dict
+
+
 find = []
 for i in range(1992, 2022):
     # print(i)
     find.append(str(i))
 # for i in range()
 years2 = find_teams(find)
-# print(years2)
 
-scrape(years2)
+logo_dict = scrape_logos()
+print(logo_dict)
+
+# scrape_teams(years2)
 # print(edge_dict)
