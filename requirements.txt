@@ -1,0 +1,4 @@
+html2text==2020.1.16
+pywebio==1.2.3
+requests==2.22.0
+beautifulsoup4==4.9.3
